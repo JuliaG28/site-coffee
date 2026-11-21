@@ -38,7 +38,7 @@
   const props = (L, s) => {
     const p = { x: s.x, y: s.y, rotation: s.r || 0, opacity: s.o ?? 1 };
     if (!L.text) { p.width = s.w; p.height = s.h; }
-    if (s.clip != null) p.clipPath = `inset(${s.clip}px 0px 0px 0px)`;
+    if (s.clip != null || s.clipB != null) p.clipPath = `inset(${s.clip || 0}px 0px ${s.clipB || 0}px 0px)`;
     return p;
   };
 
