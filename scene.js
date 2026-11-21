@@ -103,6 +103,7 @@
       intro.progress(1);
       if (f === 1) intro.progress(0); else tl.progress((f - 2) / (N - 2));
       document.body.classList.add('still');
+      if (location.hash) setTimeout(() => document.querySelector(location.hash)?.scrollIntoView({ behavior: 'instant' }), 300);
       return;
     }
     reduce ? intro.progress(1) : intro.play();
