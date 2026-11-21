@@ -35,27 +35,33 @@
     els.push({ el, st, L });
   });
 
-  const props = (L, s) => {
+  // tamanho base fixo + escala via transform (mais leve que animar width/height)
+  els.forEach((e) => { if (!e.L.text) { e.bw = e.st[0].w; e.bh = e.st[0].h; e.el.style.width = e.bw + 'px'; e.el.style.height = e.bh + 'px'; } });
+  const props = (e, s) => {
     const p = { x: s.x, y: s.y, rotation: s.r || 0, opacity: s.o ?? 1 };
-    if (!L.text) { p.width = s.w; p.height = s.h; }
+    if (!e.L.text) { p.scaleX = s.w / e.bw; p.scaleY = s.h / e.bh; }
     if (s.clip != null || s.clipB != null) p.clipPath = `inset(${s.clip || 0}px 0px ${s.clipB || 0}px 0px)`;
     return p;
   };
 
-  els.forEach(({ el, st, L }) => {
-    gsap.set(el, Object.assign({ xPercent: -50, yPercent: L.text ? -100 : -50 }, props(L, st[0])));
+  els.forEach((e) => {
+    gsap.set(e.el, Object.assign({ xPercent: -50, yPercent: e.L.text ? -100 : -50, force3D: true }, props(e, e.st[0])));
   });
 
   // Intro automática (quadro 1 -> 2), depois o scroll conduz o resto
-  const ease = 'power2.inOut';
+  const ease = 'sine.inOut';
   const intro = gsap.timeline({ paused: true });
-  els.forEach(({ el, st, L }) => intro.to(el, Object.assign({ duration: 1.6, ease }, props(L, st[1])), 0));
+  els.forEach((e) => intro.to(e.el, Object.assign({ duration: 1.8, ease: 'power3.out' }, props(e, e.st[1])), 0));
   if (D.fill) intro.to('.fill', { opacity: D.fill[1], duration: 1.6, ease }, 0);
 
+  // cada quadro ocupa 1 unidade da linha do tempo; "span: [a, b]" faz a camada mudar só num trecho do quadro
   const tl = gsap.timeline({ paused: true });
   window.__tl = tl;
   for (let i = 1; i < N - 1; i++) {
-    els.forEach(({ el, st, L }) => tl.to(el, Object.assign({ duration: 1, ease }, props(L, st[i + 1])), i - 1));
+    els.forEach((e) => {
+      const to = e.st[i + 1], [a, b] = (to !== e.st[i] && to.span) || [0, 1];
+      tl.to(e.el, Object.assign({ duration: b - a, ease }, props(e, to)), i - 1 + a);
+    });
     if (D.fill) tl.to('.fill', { opacity: D.fill[i + 1], duration: 1, ease }, i - 1);
   }
 
@@ -83,11 +89,11 @@
     ScrollTrigger.create({
       trigger: wrap,
       start: 'top top',
-      end: () => '+=' + innerHeight * (N - 2) * 0.9,
+      end: () => '+=' + innerHeight * (N - 2) * 1.1,
       pin: true,
-      scrub: reduce ? true : 0.8,
+      scrub: reduce ? true : 1.2,
       animation: tl,
-      snap: { snapTo: 1 / (N - 2), directional: false, inertia: false, delay: 0.15, duration: { min: 0.3, max: 0.9 }, ease },
+      snap: { snapTo: 1 / (N - 2), directional: false, inertia: false, delay: 0.35, duration: { min: 0.5, max: 1.2 }, ease: 'sine.inOut' },
     });
     document.querySelector('.hint')?.classList.add('show');
   });

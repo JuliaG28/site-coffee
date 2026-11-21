@@ -303,7 +303,7 @@
 const B = (l, t, w, h, r = 0, o = 1, extra = {}) => Object.assign({ x: l + w / 2, y: t + h / 2, w, h, r, o }, extra);
 const C = (cx, cy, w, h, r = 0, o = 1) => ({ x: cx, y: cy, w, h, r, o });
 const BG = (t, o = 1) => B(-480, t, 2400, 2053, 0, o);
-const P = (cx, cy, r, o, clipB) => ({ x: cx, y: cy, w: 361, h: 951, r, o, clipB });
+const P = (cx, cy, r, o, clipB, span) => ({ x: cx, y: cy, w: 361, h: 951, r, o, clipB, span });
 const T = (bottom, o = 1) => ({ x: 720, y: bottom, o });
 const GREENIFY = 'hue-rotate(-58deg) saturate(.85) brightness(.84)';   // cafeteira azul -> verde da marca
 const part = (name, s3x, filter) => ({ src: `assets/${name}.webp`, filter, s: [C(s3x, 558, 880, 880),,, , C(706, 558, 880, 880), C(706, 558, 880, 880)] });
@@ -321,10 +321,10 @@ window.SCENE = {
     { text: 'mineiro', size: 300, color: '#0f5a32', s: [T(20), T(810), T(-110)] },
     { src: 'assets/beans-1.webp', s: [B(136.81, -1856, 987.186, 1020.283), , B(136.81, 1114, 987.186, 1020.283), B(136.81, 1134, 987.186, 1020.283)] },
     { src: 'assets/beans-2.webp', s: [B(106, -1331.93, 987.186, 1020.283), , B(106, 978.07, 987.186, 1020.283), B(106, 998.07, 987.186, 1020.283)] },
-    // pacote em pé (cai, vira de cabeça pra baixo e some quando o pacote aberto aparece)
-    { keep: true, src: 'assets/patriota-tradicional.webp', alt: 'Pacote Café Patriota Tradicional', s: [C(720, -450, 300, 679, -20), C(720, 430, 300, 679, -6), C(720, 430, 300, 679, 174), C(720, 430, 300, 679, 174, 0), C(720, -600, 300, 679, 174, 0)] },
-    // pacote aberto derramando grãos (os grãos aparecem de cima pra baixo)
-    { keep: true, src: 'assets/patriota-invertido.webp', alt: '', s: [P(734, -400, -186, 0, 275), P(734, 566, -186, 0, 275), P(734, 566, -6, 0, 275), P(734, 566, -6, 1, 0), P(860, -160, -10, 1, 0), P(860, -1100, -10, 1, 0)] },
+    // pacote aberto derramando grãos: fica por baixo e aparece no fim da virada; os grãos saem da boca do pacote
+    { keep: true, src: 'assets/patriota-invertido.webp', alt: '', s: [P(734, -400, -186, 0, 275), P(734, 556, -186, 0, 275), P(734, 556, -6, 1, 275, [0.97, 1]), P(734, 556, -6, 1, 0, [0.15, 1]), P(860, -200, -10, 1, 0), P(860, -1100, -10, 1, 0)] },
+    // pacote em pé: cai, vira de cabeça pra baixo e some rápido revelando o pacote aberto
+    { keep: true, src: 'assets/patriota-tradicional.webp', alt: 'Pacote Café Patriota Tradicional', s: [C(720, -450, 300, 679, -20), C(720, 420, 300, 679, -6), C(720, 420, 300, 679, 174), Object.assign(C(720, 420, 300, 679, 174, 0), { span: [0, 0.12] }), C(720, -600, 300, 679, 174, 0)] },
     { src: 'assets/coffee-top.webp', alt: 'Sachê de café', s: [C(867.66, -532.70, 848, 848), C(559, 634, 848, 848, -76.19), C(518.13, 283.21, 1148.796, 1148.796, -39.16), C(518.13, -306.79, 1148.796, 1148.796, -39.16)] },
     { src: 'assets/coffee-filter.webp', alt: 'Filtro de papel', s: [B(270, 1208, 860, 635), , B(86, 531, 1228, 907), B(329, 137, 742, 549), B(635, 137, 372, 275)] },
     part('top-stick', 1876),
@@ -413,7 +413,7 @@ menu.addEventListener('click', () => { menu.classList.remove('open'); burger.set
       if (L.src === 'assets/coffee-top.webp') { L.src = r.top; L.alt = 'Pacote Café Patriota Extraforte'; }
     });
   } catch (e) { /* mantém as imagens originais */ }
-  const s = document.createElement('script'); s.src = 'scene.js?v=5'; document.body.appendChild(s);
+  const s = document.createElement('script'); s.src = 'scene.js?v=6'; document.body.appendChild(s);
 })();
 </script>
 </body>
