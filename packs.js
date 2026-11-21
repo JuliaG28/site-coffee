@@ -10,7 +10,7 @@ window.patriotaPacks = async function () {
   const im = x.getImageData(0, 0, W, H), d = im.data;
 
   // 1) remove o fundo branco por preenchimento a partir das bordas
-  const isBg = (i) => { const r = d[i], g = d[i + 1], b = d[i + 2]; const mn = Math.min(r, g, b), mx = Math.max(r, g, b); return mn > 222 && mx - mn < 22; };
+  const isBg = (i) => { const r = d[i], g = d[i + 1], b = d[i + 2]; const mn = Math.min(r, g, b), mx = Math.max(r, g, b); return mn > 150 && mx - mn < 26; };   // branco + sombra cinza do chão
   const seen = new Uint8Array(W * H), q = new Int32Array(W * H); let h = 0, t = 0;
   const push = (p) => { if (!seen[p] && isBg(p * 4)) { seen[p] = 1; q[t++] = p; } };
   for (let i = 0; i < W; i++) { push(i); push((H - 1) * W + i); }
