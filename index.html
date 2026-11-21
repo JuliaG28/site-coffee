@@ -306,8 +306,8 @@ const BG = (t, o = 1) => B(-480, t, 2400, 2053, 0, o);
 const P = (cx, cy, r, o, clipB) => ({ x: cx, y: cy, w: 361, h: 951, r, o, clipB });
 const T = (bottom, o = 1) => ({ x: 720, y: bottom, o });
 const GREENIFY = 'hue-rotate(-58deg) saturate(.85) brightness(.84)';   // cafeteira azul -> verde da marca
-const part = (name, s3x, filter) => ({ src: `assets/${name}.png`, filter, s: [C(s3x, 558, 880, 880),,, , C(706, 558, 880, 880), C(706, 558, 880, 880)] });
-const bean = (n, l, t0, t1) => ({ src: `assets/bean-${n}.png`, s: [B(l, t0, 1694, 1252), B(l, t1, 1694, 1252)] });
+const part = (name, s3x, filter) => ({ src: `assets/${name}.webp`, filter, s: [C(s3x, 558, 880, 880),,, , C(706, 558, 880, 880), C(706, 558, 880, 880)] });
+const bean = (n, l, t0, t1) => ({ src: `assets/bean-${n}.webp`, s: [B(l, t0, 1694, 1252), B(l, t1, 1694, 1252)] });
 
 window.SCENE = {
   width: 1440, height: 1024, states: 8, mobileFocus: 900, split: 862,
@@ -319,28 +319,28 @@ window.SCENE = {
     { text: 'arábica', size: 260, color: '#fff', s: [T(1611), T(1611), T(811), T(-9)] },
     { text: 'aroma', size: 300, color: '#d3a12c', s: [T(-235), T(555), T(-365)] },
     { text: 'mineiro', size: 300, color: '#0f5a32', s: [T(20), T(810), T(-110)] },
-    { src: 'assets/beans-1.png', s: [B(136.81, -1856, 987.186, 1020.283), , B(136.81, 1114, 987.186, 1020.283), B(136.81, 1134, 987.186, 1020.283)] },
-    { src: 'assets/beans-2.png', s: [B(106, -1331.93, 987.186, 1020.283), , B(106, 978.07, 987.186, 1020.283), B(106, 998.07, 987.186, 1020.283)] },
+    { src: 'assets/beans-1.webp', s: [B(136.81, -1856, 987.186, 1020.283), , B(136.81, 1114, 987.186, 1020.283), B(136.81, 1134, 987.186, 1020.283)] },
+    { src: 'assets/beans-2.webp', s: [B(106, -1331.93, 987.186, 1020.283), , B(106, 978.07, 987.186, 1020.283), B(106, 998.07, 987.186, 1020.283)] },
     // pacote em pé (cai, vira de cabeça pra baixo e some quando o pacote aberto aparece)
-    { keep: true, src: 'assets/patriota-tradicional.png', alt: 'Pacote Café Patriota Tradicional', s: [C(720, -450, 300, 679, -20), C(720, 430, 300, 679, -6), C(720, 430, 300, 679, 174), C(720, 430, 300, 679, 174, 0), C(720, -600, 300, 679, 174, 0)] },
+    { keep: true, src: 'assets/patriota-tradicional.webp', alt: 'Pacote Café Patriota Tradicional', s: [C(720, -450, 300, 679, -20), C(720, 430, 300, 679, -6), C(720, 430, 300, 679, 174), C(720, 430, 300, 679, 174, 0), C(720, -600, 300, 679, 174, 0)] },
     // pacote aberto derramando grãos (os grãos aparecem de cima pra baixo)
-    { keep: true, src: 'assets/patriota-invertido.png', alt: '', s: [P(734, -400, -186, 0, 275), P(734, 566, -186, 0, 275), P(734, 566, -6, 0, 275), P(734, 566, -6, 1, 0), P(860, -160, -10, 1, 0), P(860, -1100, -10, 1, 0)] },
-    { src: 'assets/coffee-top.png', alt: 'Sachê de café', s: [C(867.66, -532.70, 848, 848), C(559, 634, 848, 848, -76.19), C(518.13, 283.21, 1148.796, 1148.796, -39.16), C(518.13, -306.79, 1148.796, 1148.796, -39.16)] },
-    { src: 'assets/coffee-filter.png', alt: 'Filtro de papel', s: [B(270, 1208, 860, 635), , B(86, 531, 1228, 907), B(329, 137, 742, 549), B(635, 137, 372, 275)] },
+    { keep: true, src: 'assets/patriota-invertido.webp', alt: '', s: [P(734, -400, -186, 0, 275), P(734, 566, -186, 0, 275), P(734, 566, -6, 0, 275), P(734, 566, -6, 1, 0), P(860, -160, -10, 1, 0), P(860, -1100, -10, 1, 0)] },
+    { src: 'assets/coffee-top.webp', alt: 'Sachê de café', s: [C(867.66, -532.70, 848, 848), C(559, 634, 848, 848, -76.19), C(518.13, 283.21, 1148.796, 1148.796, -39.16), C(518.13, -306.79, 1148.796, 1148.796, -39.16)] },
+    { src: 'assets/coffee-filter.webp', alt: 'Filtro de papel', s: [B(270, 1208, 860, 635), , B(86, 531, 1228, 907), B(329, 137, 742, 549), B(635, 137, 372, 275)] },
     part('top-stick', 1876),
     part('bottom-part', -794, GREENIFY),
     part('glass-dish-1', -524),
     part('kettle-stick', 1946),
     part('kettle-glass', 1946),
-    { src: 'assets/mask-group.png', s: [B(682, 628, 296, 216, 0, 0, { clip: 186 }),,,, B(682, 628, 296, 216, 0, 1, { clip: 186 }), B(682, 628, 296, 216, 0, 1, { clip: 0 })] },
+    { src: 'assets/mask-group.webp', s: [B(682, 628, 296, 216, 0, 0, { clip: 186 }),,,, B(682, 628, 296, 216, 0, 1, { clip: 186 }), B(682, 628, 296, 216, 0, 1, { clip: 0 })] },
     part('filter-cup-base', 2686),
     part('kettle-frame', 1926),
     part('kettle-handle', 2126),
     part('middle-part', -1024, GREENIFY),
-    { src: 'assets/filter-cup.png', s: [C(468, 2647, 1584, 1584),, , C(468, 917, 1584, 1584), C(694, 558, 880, 880)] },
-    { src: 'assets/filter-top.png', s: [C(468, -424, 1584, 1584),, , C(468, 917, 1584, 1584), C(694, 558, 880, 880)] },
-    { src: 'assets/coffee-beans-table.png', s: [B(-1169, 849, 469, 159),,, , B(-129, 849, 469, 159)] },
-    { src: 'assets/coffee-beans-table-2.png', s: [B(2245, 877, 364, 116),,, , B(1155, 877, 364, 116)] },
+    { src: 'assets/filter-cup.webp', s: [C(468, 2647, 1584, 1584),, , C(468, 917, 1584, 1584), C(694, 558, 880, 880)] },
+    { src: 'assets/filter-top.webp', s: [C(468, -424, 1584, 1584),, , C(468, 917, 1584, 1584), C(694, 558, 880, 880)] },
+    { src: 'assets/coffee-beans-table.webp', s: [B(-1169, 849, 469, 159),,, , B(-129, 849, 469, 159)] },
+    { src: 'assets/coffee-beans-table-2.webp', s: [B(2245, 877, 364, 116),,, , B(1155, 877, 364, 116)] },
     bean(1, -234, -1868, 2172), bean(2, -134, -1358, 872), bean(7, -324, -1638, 1172),
     bean(3, 16, -1088, 1142), bean(4, -234, -1068, 1022), bean(5, -234, -1768, 2292),
     bean(6, -34, -1298, 932), bean(8, 136, -1218, 1152), bean(9, 101, -1282, 1128),
@@ -410,10 +410,10 @@ menu.addEventListener('click', () => { menu.classList.remove('open'); burger.set
   try {
     const r = await Promise.race([patriotaPacks(), new Promise((_, no) => setTimeout(no, 6000))]);
     SCENE.layers.forEach((L) => {
-      if (L.src === 'assets/coffee-top.png') { L.src = r.top; L.alt = 'Pacote Café Patriota Extraforte'; }
+      if (L.src === 'assets/coffee-top.webp') { L.src = r.top; L.alt = 'Pacote Café Patriota Extraforte'; }
     });
   } catch (e) { /* mantém as imagens originais */ }
-  const s = document.createElement('script'); s.src = 'scene.js?v=4'; document.body.appendChild(s);
+  const s = document.createElement('script'); s.src = 'scene.js?v=5'; document.body.appendChild(s);
 })();
 </script>
 </body>
