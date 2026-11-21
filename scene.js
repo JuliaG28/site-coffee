@@ -58,8 +58,12 @@
   function fit() {
     const vw = innerWidth, vh = innerHeight;
     const cover = Math.max(vw / W, vh / H);
-    const s = vw < 768 ? Math.max(vw / W, Math.min(vh / H, vw / (D.mobileFocus || 900))) : cover;
+    // telas largas e baixas: limita o corte em cima/embaixo e completa as laterais com a cor de fundo
+    const s = vw < 768 ? Math.max(vw / W, Math.min(vh / H, vw / (D.mobileFocus || 900))) : Math.min(cover, (vh / H) * 1.3);
     stage.style.transform = `translate(-50%,-50%) scale(${s})`;
+    const hd = document.querySelector('header');
+    if (hd) { hd.style.setProperty('--s', Math.min(s, vw / W)); hd.style.setProperty('--x', Math.max(0, (vw - W * s) / 2) + 'px'); }
+    if (D.split) wrap.style.setProperty('--split', vh / 2 + (D.split - H / 2) * s + 'px');
   }
   addEventListener('resize', fit);
   fit();
