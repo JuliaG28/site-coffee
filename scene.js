@@ -6,6 +6,8 @@
   const stage = document.querySelector('.stage');
   const wrap = document.querySelector('.scene');
   const els = [];
+  // camadas ficam recortadas na área do quadro (o fundo fica fora, cobrindo as laterais em telas largas)
+  const clipBox = document.createElement('div'); clipBox.className = 'clipbox';
 
   D.layers.forEach((L) => {
     let el;
@@ -26,7 +28,7 @@
       el.className = 'lyr';
     }
     if (L.filter) el.style.filter = L.filter;
-    stage.appendChild(el);
+    if (L.div) stage.appendChild(el); else { if (!clipBox.isConnected) stage.appendChild(clipBox); clipBox.appendChild(el); }
     // completa estados ausentes repetindo o anterior/seguinte
     const st = [];
     for (let i = 0; i < N; i++) st[i] = L.s[i] || null;
@@ -51,6 +53,7 @@
   // Intro automática (quadro 1 -> 2), depois o scroll conduz o resto
   const ease = 'sine.inOut';
   const intro = gsap.timeline({ paused: true });
+  window.__intro = intro;
   els.forEach((e) => intro.to(e.el, Object.assign({ duration: 1.8, ease: 'power3.out' }, props(e, e.st[1])), 0));
   if (D.fill) intro.to('.fill', { opacity: D.fill[1], duration: 1.6, ease }, 0);
 
