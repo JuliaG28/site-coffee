@@ -94,7 +94,10 @@
   gsap.registerPlugin(ScrollTrigger);
   if (!still) scrollTo(0, 0);
   const imgs = [...stage.querySelectorAll('img')];
-  Promise.all(imgs.map((i) => (i.complete && i.naturalWidth ? 1 : new Promise((r) => { i.onload = r; i.onerror = () => { i.remove(); r(); }; })))).then(() => {
+  Promise.all(imgs.map((i) => {
+    if (i.complete) { if (!i.naturalWidth) i.remove(); return 1; }
+    return new Promise((r) => { i.onload = r; i.onerror = () => { i.remove(); r(); }; });
+  })).then(() => {
     document.body.classList.add('ready');
     setTimeout(solid, 50);
     if (still) {
