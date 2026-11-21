@@ -9,7 +9,11 @@
 
   D.layers.forEach((L) => {
     let el;
-    if (L.text) {
+    if (L.div) {
+      el = document.createElement('div');
+      el.className = 'lyr';
+      el.style.background = L.div;
+    } else if (L.text) {
       el = document.createElement('div');
       el.className = 'txt';
       el.textContent = L.text;
@@ -21,6 +25,7 @@
       el.decoding = 'async';
       el.className = 'lyr';
     }
+    if (L.filter) el.style.filter = L.filter;
     stage.appendChild(el);
     // completa estados ausentes repetindo o anterior/seguinte
     const st = [];
@@ -69,6 +74,11 @@
   fit();
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // ?frame=N mostra um quadro parado (usado nos mockups do portfólio)
+  const still = new URLSearchParams(location.search).get('frame');
+  const header = document.querySelector('header');
+  const solid = () => header?.classList.toggle('solid', wrap.getBoundingClientRect().bottom < 90);
+  addEventListener('scroll', solid, { passive: true });
   intro.eventCallback('onComplete', () => {
     ScrollTrigger.create({
       trigger: wrap,
@@ -82,10 +92,19 @@
     document.querySelector('.hint')?.classList.add('show');
   });
   gsap.registerPlugin(ScrollTrigger);
-  scrollTo(0, 0);
+  if (!still) scrollTo(0, 0);
   const imgs = [...stage.querySelectorAll('img')];
   Promise.all(imgs.map((i) => (i.complete && i.naturalWidth ? 1 : new Promise((r) => { i.onload = r; i.onerror = () => { i.remove(); r(); }; })))).then(() => {
     document.body.classList.add('ready');
+    setTimeout(solid, 50);
+    if (still) {
+      const f = Math.max(1, Math.min(N, +still));
+      intro.eventCallback('onComplete', null);
+      intro.progress(1);
+      if (f === 1) intro.progress(0); else tl.progress((f - 2) / (N - 2));
+      document.body.classList.add('still');
+      return;
+    }
     reduce ? intro.progress(1) : intro.play();
   });
   addEventListener('scroll', () => document.querySelector('.hint')?.classList.toggle('show', scrollY < 40), { passive: true });

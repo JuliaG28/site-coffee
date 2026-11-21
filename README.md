@@ -1,10 +1,12 @@
-# Site Coffee
+# Café Patriota do Brasil · proposta de redesign
 
-Hero animado "finest aroma / supreme taste", recriado a partir do Figma (pack 19 GRIGOLETTO).
+Projeto conceitual de Julia Gabriele (MOVA). Não é o site oficial do Café Patriota do Brasil.
 
-- `index.html`: página, menu e **dados da animação** (posições de cada camada em cada quadro)
-- `scene.js`: motor que anima as camadas conforme o scroll (GSAP + ScrollTrigger)
-- `assets/`: imagens exportadas do Figma
-- `js/`: GSAP
+- `index.html`: site do café. Hero animado no scroll + catálogo, Fazenda Herança, vantagens e contato.
+  Produtos, preços e ficha de degustação ficam nas listas `PRODUCTS` e `SHEET` no fim do arquivo.
+- `portfolio.html`: estudo de caso no estilo Behance, com o site rodando dentro dos mockups.
+- `original.html`: o protótipo original do Figma (Coffee, pack 19 GRIGOLETTO).
+- `scene.js`: motor da animação (GSAP + ScrollTrigger). `index.html?frame=3` mostra um quadro parado.
+- `assets/`: imagens exportadas do Figma. As fotos dos produtos e o logo vêm da loja oficial.
 
-Para editar textos, cores e links do menu, mexa no `index.html`. O site é publicado pelo GitHub Pages a cada alteração na branch `main`.
+Publicado pelo GitHub Pages a cada alteração na branch `main`.

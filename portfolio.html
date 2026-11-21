@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Café Patriota Redesign</title>
+<meta name="description" content="Estudo de caso: proposta de redesign do e-commerce do Café Patriota do Brasil, com hero animado no scroll. Por Julia Gabriele · MOVA.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+  /* Layout: estudo de caso em painéis arredondados (estilo Behance), um tema por painel, mockups com o site real ao vivo */
+  :root {
+    --page:#e9e6df; --paper:#fbf8f2; --green:#0f5a32; --green-900:#0a3a21; --sage:#cfe0cc; --yellow:#f2bf1f;
+    --ink:#1b1814; --muted:#6b6357; --line:#ddd4c3; --cream:#f4ecdc;
+    --display:'Bricolage Grotesque', Inter, system-ui, sans-serif; --body:Inter, system-ui, sans-serif;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--page); color:var(--ink); font-family:var(--body); line-height:1.55; }
+  a { color:inherit; }
+  :focus-visible { outline:3px solid var(--yellow); outline-offset:3px; border-radius:6px; }
+  .page { max-width:1280px; margin:0 auto; padding:12px max(12px, env(safe-area-inset-right, 0px)) 40px max(12px, env(safe-area-inset-left, 0px)); display:grid; gap:12px; }
+
+  .top { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 6px; flex-wrap:wrap; }
+  .who { display:flex; align-items:center; gap:12px; font-weight:600; }
+  .who i { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg, var(--green) 0 50%, var(--yellow) 50%); display:block; }
+  .who small { display:block; font-weight:500; color:var(--muted); font-size:13px; }
+  .btn { display:inline-flex; align-items:center; gap:8px; text-decoration:none; font:700 15px var(--body); padding:12px 20px; border-radius:999px; background:var(--green-900); color:#fff; transition:transform .2s; }
+  .btn:hover { transform:translateY(-2px); }
+  .btn.light { background:#fff; color:var(--green-900); }
+
+  .panel { border-radius:28px; overflow:hidden; position:relative; }
+  .pad { padding:clamp(28px, 5vw, 72px); }
+  .tag { display:inline-flex; align-items:center; gap:8px; font:700 12px var(--body); letter-spacing:.12em; text-transform:uppercase; padding:7px 12px; border-radius:999px; background:rgba(255,255,255,.14); color:#fff; }
+  .tag.soft { background:#e8f0e3; color:var(--green); }
+  h1, h2 { font-family:var(--display); font-weight:800; letter-spacing:-0.03em; line-height:1; text-wrap:balance; }
+  h1 { font-size:clamp(44px, 7.5vw, 104px); }
+  h2 { font-size:clamp(30px, 4.4vw, 58px); }
+  .muted-on-dark { color:#c1d1c0; }
+
+  /* capa */
+  .cover { background:radial-gradient(1200px 500px at 50% 110%, #156b3d 0%, transparent 60%), var(--green-900); color:#fff; text-align:center; }
+  .cover::before { content:""; position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,.18) 1px, transparent 1.2px); background-size:26px 26px; mask-image:linear-gradient(#000, transparent 70%); pointer-events:none; }
+  .cover .pad { padding-bottom:0; position:relative; }
+  .cover h1 span { color:var(--yellow); }
+  .cover p { max-width:60ch; margin:18px auto 0; font-size:clamp(16px, 1.5vw, 19px); }
+  .chips { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:26px; }
+
+  /* mockups */
+  .browser { background:#fff; border-radius:16px 16px 0 0; box-shadow:0 40px 80px -30px rgba(0,0,0,.6); overflow:hidden; margin:48px auto 0; max-width:980px; }
+  .browser .bar { height:38px; display:flex; align-items:center; gap:7px; padding:0 14px; background:#f3f1ec; border-bottom:1px solid #e4e0d7; }
+  .browser .bar i { width:11px; height:11px; border-radius:50%; background:#d9d4ca; }
+  .browser .bar span { margin-left:12px; flex:1; max-width:380px; height:24px; border-radius:7px; background:#fff; font:500 12px var(--body); color:var(--muted); display:flex; align-items:center; padding:0 10px; overflow:hidden; white-space:nowrap; }
+  .screen { position:relative; overflow:hidden; background:var(--cream); }
+  .screen iframe { position:absolute; left:0; top:0; border:0; transform-origin:0 0; pointer-events:none; }
+  .screen.live iframe { pointer-events:auto; }
+  .phone { width:min(300px, 72%); aspect-ratio:393/852; border-radius:44px; padding:11px; background:#121212; box-shadow:0 40px 70px -28px rgba(0,0,0,.55), inset 0 0 0 2px #2b2b2b; margin:0 auto; position:relative; }
+  .phone .screen { border-radius:34px; height:100%; }
+  .phone::after { content:""; position:absolute; top:20px; left:50%; width:30%; height:22px; margin-left:-15%; background:#121212; border-radius:20px; z-index:2; }
+
+  /* infos */
+  .info { background:var(--paper); display:grid; grid-template-columns:1fr 1.6fr; gap:clamp(28px, 5vw, 72px); }
+  .meta { display:grid; gap:18px; align-content:start; }
+  .meta div { border-top:1px solid var(--line); padding-top:12px; }
+  .meta dt { font:700 12px var(--body); letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+  .meta dd { font-weight:600; margin-top:3px; }
+  .story h2 { color:var(--green-900); }
+  .story h3 { font:800 20px var(--display); margin-top:26px; color:var(--green); }
+  .story p { color:#463f35; margin-top:8px; max-width:62ch; }
+
+  .duo { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .duo .panel { padding:clamp(28px, 4vw, 56px) 20px; display:flex; flex-direction:column; align-items:center; gap:26px; text-align:center; }
+  .duo h3 { font:800 clamp(20px, 2.2vw, 28px) var(--display); letter-spacing:-0.02em; max-width:22ch; }
+  .yellow { background:var(--yellow); color:var(--green-900); }
+  .sage { background:var(--sage); color:var(--green-900); }
+
+  /* problemas */
+  .dark { background:#101511; color:#fff; text-align:center; min-height:560px; display:grid; place-items:center; }
+  .dark::before { content:""; position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,.12) 1px, transparent 1.2px); background-size:22px 22px; }
+  .dark h2 { position:relative; max-width:16ch; margin:0 auto; }
+  .dark h2 em { font-style:normal; color:#5b6a5e; }
+  .note { position:absolute; width:min(300px, 40%); background:#fff; color:var(--ink); border-radius:18px; padding:16px 18px; text-align:left; box-shadow:0 20px 40px -20px rgba(0,0,0,.6); }
+  .note b { display:block; font:700 16px var(--display); }
+  .note span { font-size:13.5px; color:var(--muted); }
+  .note .ic { position:absolute; right:-12px; bottom:-12px; width:40px; height:40px; border-radius:50%; display:grid; place-items:center; font-size:18px; color:#fff; border:3px solid #fff; }
+  .n1 { top:8%; left:5%; transform:rotate(-4deg); } .n1 .ic { background:#e0533d; }
+  .n2 { top:10%; right:5%; transform:rotate(3deg); } .n2 .ic { background:#d9a520; }
+  .n3 { bottom:9%; left:8%; transform:rotate(3deg); } .n3 .ic { background:#3a7bd5; }
+  .n4 { bottom:8%; right:7%; transform:rotate(-3deg); } .n4 .ic { background:#7a4fd6; }
+
+  /* storyboard */
+  .board { background:var(--paper); }
+  .frames { display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:12px; margin-top:34px; }
+  .frames figure { display:grid; gap:10px; }
+  .frames .screen { aspect-ratio:1440/1024; border-radius:14px; border:1px solid var(--line); }
+  .frames figcaption { font-size:13.5px; color:var(--muted); }
+  .frames figcaption b { display:block; color:var(--ink); font:700 15px var(--display); }
+  .frames figcaption i { font-style:normal; font:700 12px var(--body); color:var(--green); letter-spacing:.1em; }
+
+  /* bento */
+  .bento { display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:12px; }
+  .cell { border-radius:28px; padding:28px; display:flex; flex-direction:column; gap:14px; overflow:hidden; }
+  .cell h3 { font:800 clamp(20px, 2vw, 26px) var(--display); letter-spacing:-0.02em; }
+  .cell p { font-size:15px; color:inherit; opacity:.78; }
+  .cell .screen { border-radius:16px; margin-top:auto; border:1px solid rgba(0,0,0,.06); }
+  .c1 { grid-column:span 4; background:#eef3ea; color:var(--green-900); }
+  .c2 { grid-column:span 2; background:var(--green); color:#fff; }
+  .c3 { grid-column:span 2; background:#fff; }
+  .c4 { grid-column:span 4; background:#f6efe0; color:var(--ink); }
+  .pill-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .pill-row span { background:rgba(255,255,255,.16); padding:8px 12px; border-radius:999px; font:600 13px var(--body); }
+  .c3 .pill-row span { background:#eef3ea; color:var(--green); }
+  .big { font:800 64px var(--display); line-height:1; letter-spacing:-0.04em; color:var(--yellow); }
+
+  /* design system */
+  .ds { background:var(--paper); display:grid; grid-template-columns:1fr 1fr; gap:clamp(28px, 4vw, 56px); }
+  .swatches { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; margin-top:24px; }
+  .sw { border-radius:18px; aspect-ratio:1/1.05; padding:14px; display:flex; flex-direction:column; justify-content:flex-end; font:600 13px var(--body); border:1px solid rgba(0,0,0,.06); }
+  .sw small { font-weight:500; opacity:.75; font-variant-numeric:tabular-nums; }
+  .type { border:1px solid var(--line); border-radius:22px; padding:24px; margin-top:24px; }
+  .type .aa { font:800 88px var(--display); line-height:1; color:var(--green-900); letter-spacing:-0.04em; }
+  .type p { color:var(--muted); font-size:14px; margin-top:8px; }
+  .comp { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:16px; }
+  .comp .b1 { background:var(--green); color:#fff; padding:12px 22px; border-radius:999px; font-weight:700; }
+  .comp .b2 { border:1.5px solid var(--green); color:var(--green); padding:10px 18px; border-radius:999px; font-weight:600; font-size:14px; }
+  .comp .b3 { background:var(--yellow); color:var(--green-900); padding:6px 10px; border-radius:999px; font-weight:800; font-size:13px; }
+  .comp .b4 { background:#efe3cc; color:#3a2618; padding:5px 9px; border-radius:8px; font-weight:600; font-size:12.5px; }
+
+  .end { background:var(--green-900); color:#fff; text-align:center; }
+  .end h2 { max-width:18ch; margin:14px auto 0; }
+  .end p { max-width:60ch; margin:16px auto 0; }
+  .end .row { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:28px; }
+  .legal { font-size:13px; color:var(--muted); text-align:center; padding:10px 16px; max-width:80ch; margin:0 auto; }
+
+  @media (max-width: 900px) {
+    .info, .ds { grid-template-columns:1fr; }
+    .frames { grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .bento { grid-template-columns:1fr; }
+    .c1, .c2, .c3, .c4 { grid-column:auto; }
+  }
+  @media (max-width: 640px) {
+    .duo { grid-template-columns:1fr; }
+    .dark { min-height:auto; padding:40px 18px; display:flex; flex-direction:column; gap:12px; }
+    .dark h2 { order:-1; margin-bottom:16px; }
+    .note { position:relative; inset:auto; width:100%; transform:none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top">
+    <div class="who"><i aria-hidden="true"></i><div>Julia Gabriele<small>MOVA · web design & motion</small></div></div>
+    <a class="btn" href="index.html">Ver site ao vivo ↗</a>
+  </div>
+
+  <section class="panel cover">
+    <div class="pad">
+      <span class="tag">Estudo de caso · Proposta de redesign</span>
+      <h1 style="margin-top:20px">Café Patriota<br><span>do Brasil</span></h1>
+      <p class="muted-on-dark">Um e-commerce que conta a história do grão à xícara: hero animado no scroll, catálogo com filtros e ficha de degustação, mantendo o verde e amarelo da marca.</p>
+      <div class="chips"><span class="tag">Web design</span><span class="tag">Motion</span><span class="tag">E-commerce</span><span class="tag">Front-end</span></div>
+      <div class="browser">
+        <div class="bar"><i></i><i></i><i></i><span>cafepatriota · proposta</span></div>
+        <div class="screen" data-w="1440" data-h="900" style="aspect-ratio:1440/900"><iframe title="Site do Café Patriota ao vivo" src="index.html?frame=2" loading="lazy"></iframe></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel info pad">
+    <dl class="meta">
+      <div><dt>Cliente</dt><dd>Café Patriota do Brasil (proposta)</dd></div>
+      <div><dt>Ano</dt><dd>2026</dd></div>
+      <div><dt>Escopo</dt><dd>UI design, motion, front-end</dd></div>
+      <div><dt>Ferramentas</dt><dd>Figma, GSAP, HTML, CSS, JavaScript</dd></div>
+      <div><dt>Entrega</dt><dd>Site responsivo publicado no GitHub Pages</dd></div>
+    </dl>
+    <div class="story">
+      <span class="tag soft">Visão geral</span>
+      <h2 style="margin-top:14px">O aliado do brasileiro merecia uma vitrine à altura</h2>
+      <h3>Desafio</h3>
+      <p>A loja atual vende bem, mas a página inicial repete o mesmo carrossel de seis cafés três vezes, abre com um banner estático e quase não fala da Fazenda Herança. Quem chega não entende o que diferencia o Tradicional do Extraforte ou do Gourmet Mundo Novo.</p>
+      <h3>Solução</h3>
+      <p>Uma abertura animada que acompanha o scroll, do pacote caindo até o café pronto na jarra, seguida de uma loja direta: catálogo filtrável por linha, ficha de degustação comparando sabor, aroma, corpo e torra, e as vantagens de compra (frete grátis acima de R$97, até 12x) sempre à vista.</p>
+    </div>
+  </section>
+
+  <div class="duo">
+    <section class="panel yellow">
+      <h3>100% arábica em letras do tamanho da tela</h3>
+      <div class="phone"><div class="screen" data-w="393" data-h="852"><iframe title="Versão celular, quadro 100% arábica" src="index.html?frame=3" loading="lazy"></iframe></div></div>
+    </section>
+    <section class="panel sage">
+      <h3>A cafeteira se monta peça por peça enquanto você rola</h3>
+      <div class="phone"><div class="screen" data-w="393" data-h="852"><iframe title="Versão celular, café pronto" src="index.html?frame=6" loading="lazy"></iframe></div></div>
+    </section>
+  </div>
+
+  <section class="panel dark pad" aria-label="O que encontramos no site atual">
+    <div class="note n1"><b>Carrossel repetido</b><span>Os mesmos 6 produtos aparecem 3 vezes seguidas na home.</span><i class="ic" aria-hidden="true">↻</i></div>
+    <div class="note n2"><b>Banner estático</b><span>A primeira dobra não mostra o produto em uso nem a origem.</span><i class="ic" aria-hidden="true">▢</i></div>
+    <h2>Uma loja de café deveria dar <em>vontade de passar um café agora.</em></h2>
+    <div class="note n3"><b>Linhas sem comparação</b><span>Sabor e torra só aparecem dentro de cada produto.</span><i class="ic" aria-hidden="true">⇄</i></div>
+    <div class="note n4"><b>Fazenda escondida</b><span>A Fazenda Herança só é citada na descrição técnica.</span><i class="ic" aria-hidden="true">✦</i></div>
+  </section>
+
+  <section class="panel board pad">
+    <span class="tag soft">Storyboard do scroll</span>
+    <h2 style="margin-top:14px; color:var(--green-900)">Cinco quadros, uma história</h2>
+    <div class="frames">
+      <figure><div class="screen" data-w="1440" data-h="1024"><iframe title="Quadro 1" src="index.html?frame=2" loading="lazy"></iframe></div><figcaption><i>01</i><b>Aroma mineiro</b>O pacote cai e a marca se apresenta.</figcaption></figure>
+      <figure><div class="screen" data-w="1440" data-h="1024"><iframe title="Quadro 2" src="index.html?frame=3" loading="lazy"></iframe></div><figcaption><i>02</i><b>100% arábica</b>O fundo muda para o verde e o filtro sobe.</figcaption></figure>
+      <figure><div class="screen" data-w="1440" data-h="1024"><iframe title="Quadro 3" src="index.html?frame=4" loading="lazy"></iframe></div><figcaption><i>03</i><b>O porta-filtro</b>O papel encaixa no suporte.</figcaption></figure>
+      <figure><div class="screen" data-w="1440" data-h="1024"><iframe title="Quadro 4" src="index.html?frame=5" loading="lazy"></iframe></div><figcaption><i>04</i><b>A cafeteira</b>As peças chegam das laterais.</figcaption></figure>
+      <figure><div class="screen" data-w="1440" data-h="1024"><iframe title="Quadro 5" src="index.html?frame=6" loading="lazy"></iframe></div><figcaption><i>05</i><b>Café pronto</b>A jarra enche e a loja começa.</figcaption></figure>
+    </div>
+  </section>
+
+  <div class="bento">
+    <section class="cell c1">
+      <span class="tag soft" style="align-self:flex-start">Catálogo</span>
+      <h3>Seis cafés, filtráveis por linha, com preço e parcelamento no card</h3>
+      <div class="screen" data-w="1280" data-h="760" style="aspect-ratio:1280/760"><iframe title="Catálogo de cafés" src="index.html?frame=6#cafes" loading="lazy"></iframe></div>
+    </section>
+    <section class="cell c2">
+      <span class="tag" style="align-self:flex-start">Vantagens</span>
+      <span class="big">R$97</span>
+      <h3>Frete grátis para todo o Brasil a partir desse valor</h3>
+      <div class="pill-row"><span>Até 12x</span><span>Compra protegida</span><span>Trocas fáceis</span></div>
+    </section>
+    <section class="cell c3">
+      <span class="tag soft" style="align-self:flex-start">Atendimento</span>
+      <h3>WhatsApp e Instagram a um toque</h3>
+      <p>O fechamento da página leva direto para o atendimento da fazenda.</p>
+      <div class="pill-row"><span>(35) 3091-0741</span><span>@cafe_patriota</span></div>
+    </section>
+    <section class="cell c4">
+      <span class="tag soft" style="align-self:flex-start">Ficha de degustação</span>
+      <h3>Sabor, aroma, corpo e torra lado a lado, com a origem em cada linha</h3>
+      <div class="screen" data-w="1280" data-h="760" style="aspect-ratio:1280/760"><iframe title="Fazenda Herança e ficha de degustação" src="index.html?frame=6#fazenda" loading="lazy"></iframe></div>
+    </section>
+  </div>
+
+  <section class="panel ds pad">
+    <div>
+      <span class="tag soft">Sistema visual</span>
+      <h2 style="margin-top:14px; color:var(--green-900)">Verde-bandeira, ouro e creme de torra</h2>
+      <div class="swatches">
+        <div class="sw" style="background:#0a3a21;color:#fff">Verde fazenda<small>#0A3A21</small></div>
+        <div class="sw" style="background:#0f5a32;color:#fff">Verde bandeira<small>#0F5A32</small></div>
+        <div class="sw" style="background:#f2bf1f;color:#0a3a21">Amarelo<small>#F2BF1F</small></div>
+        <div class="sw" style="background:#cfe0cc;color:#0a3a21">Sálvia<small>#CFE0CC</small></div>
+        <div class="sw" style="background:#f4ecdc;color:#3a2618">Creme<small>#F4ECDC</small></div>
+        <div class="sw" style="background:#3a2618;color:#fff">Café<small>#3A2618</small></div>
+      </div>
+    </div>
+    <div>
+      <div class="type"><div class="aa">Aa</div><b>Bricolage Grotesque</b><p>Títulos: robusta e calorosa, lembra rótulo de mercearia.</p></div>
+      <div class="type"><div class="aa" style="font-family:Inter;font-weight:900">Aa</div><b>Inter</b><p>Textos, preços e a animação do hero, igual ao protótipo original.</p></div>
+      <div class="comp" aria-label="Componentes"><span class="b1">Comprar</span><span class="b2">Extraforte</span><span class="b3">-19%</span><span class="b4">Torra média</span></div>
+    </div>
+  </section>
+
+  <section class="panel end pad">
+    <span class="tag">Obrigada pela visita</span>
+    <h2>Quer um site assim para a sua marca?</h2>
+    <p class="muted-on-dark">Design, animação e código feitos por Julia Gabriele na MOVA, do protótipo no Figma até o site publicado.</p>
+    <div class="row">
+      <a class="btn light" href="index.html">Abrir o site</a>
+      <a class="btn" style="background:#145c35" href="https://instagram.com/mova_estrategias" target="_blank" rel="noopener">@mova_estrategias</a>
+    </div>
+  </section>
+
+  <p class="legal">Projeto conceitual, sem vínculo oficial com o Café Patriota do Brasil. Marca, nomes, preços e fotos dos produtos pertencem ao Café Patriota do Brasil e foram usados apenas para esta proposta. Animação base adaptada do pack de protótipos GRIGOLETTO.</p>
+</div>
+
+<script>
+  // ajusta cada iframe ao tamanho do mockup (o site roda de verdade dentro dele)
+  const fitScreens = () => document.querySelectorAll('.screen').forEach((s) => {
+    const f = s.querySelector('iframe'); const w = +s.dataset.w, h = +s.dataset.h;
+    const k = s.clientWidth / w;
+    f.style.width = w + 'px'; f.style.height = (s.clientHeight / k || h) + 'px';
+    f.style.transform = `scale(${k})`;
+  });
+  new ResizeObserver(fitScreens).observe(document.body);
+  addEventListener('load', fitScreens); fitScreens();
+</script>
+</body>
+</html>
