@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Café</title>
+<meta name="description" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+  /* As cores abaixo são sobrescritas pelas cores de cliente.js (--green = principal, --yellow = destaque...) */
+  :root {
+    --cream:#f4ecdc; --paper:#fbf7ef; --green:#0f5a32; --green-900:#0a3a21; --leaf:#cfe0cc;
+    --yellow:#f2bf1f; --gold:#c9962a; --coffee:#3a2618; --ink:#1f1a14; --muted:#6d6151; --line:#e3d8c3;
+    --display:'Bricolage Grotesque', 'Inter', system-ui, sans-serif; --body:Inter, system-ui, sans-serif;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  html, body { background:var(--cream); color:var(--ink); font-family:var(--body); overflow-x:hidden; }
+  img { max-width:100%; }
+  a { color:inherit; }
+  :focus-visible { outline:3px solid var(--yellow); outline-offset:3px; border-radius:6px; }
+
+  /* cena */
+  .scene { position:relative; height:100vh; height:100svh; overflow:hidden; background:var(--cream); }
+  .fill { position:absolute; inset:0; opacity:0; background:linear-gradient(var(--wall2) 0 var(--split, 84%), var(--bench1) var(--split, 84%)); }
+  .stage { position:absolute; left:50%; top:50%; width:1440px; height:1024px; transform-origin:50% 50%; }
+  .clipbox { position:absolute; inset:0; overflow:hidden; }
+  .lyr, .txt { position:absolute; left:0; top:0; will-change:transform; user-select:none; pointer-events:none; }
+  .lyr { display:block; }
+  .txt { font-weight:900; line-height:1.21; white-space:nowrap; letter-spacing:-0.02em; }
+  body:not(.ready) .stage { visibility:hidden; }
+  body.still .hint, body.still .concept { display:none; }
+  body.still { overflow:hidden; }
+
+  /* menu */
+  header { position:fixed; inset:0 0 auto 0; z-index:10; height:calc(120px * var(--s, 1)); transition:background .3s, box-shadow .3s; }
+  header.solid { background:rgba(251,247,239,.92); backdrop-filter:blur(10px); box-shadow:0 1px 0 var(--line); }
+  header .in { position:absolute; left:var(--x, 0px); top:0; width:1440px; height:120px; transform:scale(var(--s, 1)); transform-origin:0 0; }
+  header .logo { position:absolute; left:110px; top:30px; height:76px; display:block; }
+  header .logo img { height:100%; width:auto; display:block; }
+  header nav a { position:absolute; top:58px; font-size:21px; font-weight:600; color:var(--green-900); text-decoration:none; transition:opacity .2s; white-space:nowrap; }
+  header nav a:hover { opacity:.6; }
+  header .buy { position:absolute; left:1170px; top:48px; height:48px; padding:0 26px; border-radius:999px; background:var(--green); color:#fff; font:600 20px var(--body); text-decoration:none; display:flex; align-items:center; gap:10px; transition:transform .2s, background .2s; }
+  header .buy:hover { transform:translateY(-2px); background:var(--green-900); }
+  .burger { display:none; }
+
+  .hint { position:fixed; left:50%; bottom:28px; transform:translate(-50%, 10px); z-index:9; font:500 14px var(--body); color:var(--green-900); opacity:0; transition:.5s; display:flex; flex-direction:column; align-items:center; gap:8px; pointer-events:none; }
+  .hint.show { opacity:.8; transform:translate(-50%, 0); }
+  .hint i { width:22px; height:34px; border:2px solid currentColor; border-radius:12px; position:relative; }
+  .hint i::after { content:""; position:absolute; left:50%; top:6px; width:4px; height:7px; margin-left:-2px; border-radius:2px; background:currentColor; animation:wheel 1.6s infinite; }
+  @keyframes wheel { 0%{opacity:0;transform:translateY(0)} 30%{opacity:1} 100%{opacity:0;transform:translateY(10px)} }
+
+  /* seções */
+  .wrap { max-width:1200px; margin:0 auto; padding-left:max(20px, env(safe-area-inset-left, 0px)); padding-right:max(20px, env(safe-area-inset-right, 0px)); }
+  section.band { padding-block:clamp(64px, 9vw, 120px); }
+  .eyebrow { font:700 13px var(--body); letter-spacing:.14em; text-transform:uppercase; color:var(--green); display:inline-flex; align-items:center; gap:10px; }
+  .eyebrow::before { content:""; width:22px; height:3px; border-radius:2px; background:linear-gradient(90deg, var(--green) 0 50%, var(--yellow) 50%); }
+  h2 { font-family:var(--display); font-weight:800; font-size:clamp(34px, 5vw, 64px); line-height:1.02; letter-spacing:-0.025em; text-wrap:balance; color:var(--green-900); margin-top:14px; }
+  .lead { font-size:clamp(16px, 1.4vw, 19px); line-height:1.6; color:var(--muted); max-width:58ch; margin-top:18px; }
+
+  .ticker { background:var(--green-900); color:#fff; overflow:hidden; white-space:nowrap; font:600 15px var(--body); letter-spacing:.06em; text-transform:uppercase; }
+  .ticker div { display:inline-flex; gap:48px; padding:16px 0; animation:tick 30s linear infinite; }
+  .ticker span::before { content:"✦"; color:var(--yellow); margin-right:48px; }
+  @keyframes tick { to { transform:translateX(-50%); } }
+
+  .head { display:flex; justify-content:space-between; align-items:end; gap:24px; flex-wrap:wrap; }
+  .filters { display:flex; gap:8px; flex-wrap:wrap; }
+  .filters button { font:600 15px var(--body); border:1.5px solid var(--green); color:var(--green); background:transparent; padding:10px 18px; border-radius:999px; cursor:pointer; }
+  .filters button[aria-pressed="true"] { background:var(--green); color:#fff; }
+  .grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:22px; margin-top:44px; }
+  .card { background:var(--paper); border-radius:24px; overflow:hidden; display:flex; flex-direction:column; border:1px solid var(--line); transition:transform .25s, box-shadow .25s; }
+  .card:hover { transform:translateY(-4px); box-shadow:0 18px 40px -18px rgba(10,58,33,.35); }
+  .card .ph { position:relative; aspect-ratio:1/1; background:#fff; display:grid; place-items:center; }
+  .card .ph img { width:100%; height:100%; object-fit:cover; transition:transform .4s; }
+  .card:hover .ph img { transform:scale(1.04); }
+  .card .ph { overflow:hidden; }
+  .card .off { position:absolute; top:14px; left:14px; background:var(--yellow); color:var(--green-900); font:800 13px var(--body); padding:6px 10px; border-radius:999px; }
+  .card .free { position:absolute; top:14px; right:14px; background:var(--green); color:#fff; font:700 12px var(--body); padding:6px 10px; border-radius:999px; letter-spacing:.04em; }
+  .card .bd { padding:20px 22px 22px; display:flex; flex-direction:column; gap:10px; flex:1; }
+  .card h3 { font:700 20px var(--display); color:var(--green-900); }
+  .notes { display:flex; flex-wrap:wrap; gap:6px; }
+  .notes span { font-size:12.5px; font-weight:600; color:var(--coffee); background:#efe3cc; padding:5px 9px; border-radius:8px; }
+  .price { display:flex; align-items:baseline; gap:10px; margin-top:auto; font-variant-numeric:tabular-nums; }
+  .price b { font:800 26px var(--display); color:var(--ink); }
+  .price s { color:var(--muted); font-size:14px; }
+  .price small { color:var(--muted); font-size:13px; margin-left:auto; }
+  .btn { display:inline-flex; justify-content:center; align-items:center; gap:8px; text-decoration:none; font:700 16px var(--body); padding:14px 22px; border-radius:999px; background:var(--green); color:#fff; transition:background .2s, transform .2s; }
+  .btn:hover { background:var(--green-900); transform:translateY(-2px); }
+  .btn.ghost { background:transparent; color:var(--green-900); border:1.5px solid var(--green-900); }
+  .btn.yellow { background:var(--yellow); color:var(--green-900); }
+
+  .farm { background:var(--green-900); color:#f3efe4; position:relative; overflow:hidden; }
+  .farm h2 { color:#fff; }
+  .farm .eyebrow { color:var(--yellow); }
+  .farm .lead { color:rgba(255,255,255,.72); }
+  .farm-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:56px; align-items:start; }
+  .facts { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px; margin-top:34px; }
+  .fact { border:1px solid rgba(255,255,255,.16); border-radius:18px; padding:18px; }
+  .fact b { display:block; font:800 30px var(--display); color:var(--yellow); }
+  .fact span { font-size:14px; color:rgba(255,255,255,.72); }
+  .verse { margin-top:28px; font-style:italic; color:rgba(255,255,255,.72); font-size:15px; }
+
+  .sheet { background:#f8f3e8; color:var(--ink); border-radius:26px; padding:28px; box-shadow:0 30px 60px -30px rgba(0,0,0,.5); }
+  .sheet h3 { font:800 22px var(--display); color:var(--green-900); }
+  .sheet p { font-size:14px; color:var(--muted); margin-top:4px; }
+  .tabs { display:flex; gap:6px; margin-top:18px; background:#ece2cf; padding:5px; border-radius:999px; }
+  .tabs button { flex:1; font:700 14px var(--body); border:0; padding:10px; border-radius:999px; background:transparent; color:var(--coffee); cursor:pointer; }
+  .tabs button[aria-selected="true"] { background:var(--green); color:#fff; }
+  .rows { margin-top:18px; display:grid; gap:0; }
+  .rows div { display:grid; grid-template-columns:90px minmax(0,1fr); gap:14px; padding:13px 0; border-bottom:1px dashed #d9ccb2; font-size:15px; }
+  .rows div:last-child { border-bottom:0; }
+  .rows dt { font-weight:700; color:var(--green); font-size:13px; text-transform:uppercase; letter-spacing:.08em; padding-top:2px; }
+  .roast { display:flex; gap:5px; margin-top:6px; }
+  .roast i { width:28px; height:8px; border-radius:4px; background:#e6d6b8; }
+  .roast i.on { background:var(--coffee); }
+
+  .perks { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:18px; margin-top:40px; }
+  .perk { background:var(--paper); border:1px solid var(--line); border-radius:22px; padding:24px; }
+  .perk svg { width:34px; height:34px; color:var(--green); }
+  .perk h3 { font:700 18px var(--display); margin-top:14px; color:var(--green-900); }
+  .perk p { font-size:14.5px; color:var(--muted); margin-top:6px; line-height:1.5; }
+
+  .cta { background:var(--yellow); border-radius:32px; padding:clamp(32px, 5vw, 64px); display:grid; grid-template-columns:1.3fr 1fr; gap:32px; align-items:center; }
+  .cta h2 { margin-top:0; }
+  .cta p { color:var(--green-900); margin-top:12px; font-size:17px; line-height:1.55; }
+  .cta .actions { display:flex; flex-direction:column; gap:12px; }
+  .cta .handle { font:800 clamp(22px, 2.6vw, 32px) var(--display); color:var(--green-900); }
+
+  footer { background:var(--green-900); color:rgba(255,255,255,.72); padding-block:56px 32px; margin-top:clamp(64px, 9vw, 120px); }
+  .foot { display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:32px; }
+  .foot img { height:64px; width:auto; background:#fff; border-radius:12px; padding:8px; }
+  .foot h4 { color:#fff; font:700 15px var(--body); margin-bottom:12px; }
+  .foot a { display:block; text-decoration:none; padding:4px 0; font-size:15px; }
+  .foot a:hover { color:var(--yellow); }
+  .copy { border-top:1px solid rgba(255,255,255,.12); margin-top:40px; padding-top:20px; font-size:13px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .concept { position:fixed; right:max(14px, env(safe-area-inset-right, 0px)); bottom:max(14px, env(safe-area-inset-bottom, 0px)); z-index:20; background:rgba(31,26,20,.88); color:#fff; font:500 12.5px var(--body); padding:9px 14px; border-radius:999px; text-decoration:none; }
+  .concept b { color:var(--yellow); }
+
+  @media (max-width: 960px) {
+    .grid { grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .farm-grid, .cta { grid-template-columns:1fr; }
+    .perks { grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .foot { grid-template-columns:1fr 1fr; }
+  }
+  @media (max-width: 767px) {
+    .stage { overflow:hidden; }
+    header { height:68px; display:flex; align-items:center; justify-content:space-between; padding:0 16px; background:rgba(244,236,220,.9); backdrop-filter:blur(8px); }
+    header .in { display:contents; transform:none; }
+    header .logo { position:static; height:46px; }
+    header nav { position:fixed; inset:68px 16px auto 16px; background:var(--paper); border-radius:16px; padding:8px; display:flex; flex-direction:column; box-shadow:0 12px 40px rgba(10,58,33,.2); transform:translateY(-12px); opacity:0; pointer-events:none; transition:.25s; }
+    header nav.open { transform:none; opacity:1; pointer-events:auto; }
+    header nav a { position:static; font-size:18px; padding:12px; }
+    header .right { display:flex; gap:8px; align-items:center; margin-left:auto; }
+    header .buy { position:static; height:40px; padding:0 16px; font-size:15px; }
+    .burger { display:flex; width:40px; height:40px; border:0; border-radius:10px; background:transparent; color:var(--green-900); align-items:center; justify-content:center; cursor:pointer; }
+    .grid { grid-template-columns:1fr; }
+    .perks, .facts { grid-template-columns:1fr 1fr; }
+    .foot { grid-template-columns:1fr; }
+    .concept { left:14px; right:auto; }
+    header.solid ~ .concept { display:none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hint i::after, .ticker div { animation:none; } html { scroll-behavior:auto; } }
+  .logo-txt { font:800 34px var(--display); color:var(--green-900); letter-spacing:-.02em; white-space:nowrap; line-height:76px; }
+  .foot .logo-txt { color:#fff; line-height:1.2; }
+  @media (max-width:767px){ .logo-txt{ font-size:24px; line-height:46px; } }
+</style>
+</head>
+<body>
+<!-- Modelo de site para marcas de café · MOVA Estúdio Digital. Tudo o que muda por cliente fica em cliente.js. -->
+<header>
+  <div class="in">
+    <a class="logo" href="#inicio"></a>
+    <nav id="menu" aria-label="Principal">
+      <a href="#cafes" style="left:420px">Nossos cafés</a>
+      <a href="#origem" id="nav-origem" style="left:600px">Origem</a>
+      <a href="#vantagens" style="left:760px">Vantagens</a>
+      <a href="#contato" style="left:915px">Contato</a>
+    </nav>
+    <div class="right">
+      <a class="buy" href="#contato" target="_blank" rel="noopener">Comprar</a>
+      <button class="burger" aria-label="Abrir menu" aria-controls="menu" aria-expanded="false">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h16M3 11h16M3 16h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="inicio">
+  <section class="scene">
+    <div class="fill"></div>
+    <div class="stage"></div>
+  </section>
+
+  <div class="ticker"><div aria-hidden="true"></div></div>
+
+  <section class="band" id="cafes">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <span class="eyebrow">Os mais amados</span>
+          <h2>Escolha o café do seu dia</h2>
+        </div>
+        <div class="filters" role="group" aria-label="Filtrar por linha"></div>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <section class="band farm" id="origem">
+    <div class="wrap farm-grid">
+      <div>
+        <span class="eyebrow"></span>
+        <h2></h2>
+        <p class="lead"></p>
+        <div class="facts"></div>
+        <p class="verse"></p>
+      </div>
+      <div class="sheet" aria-labelledby="ficha">
+        <h3 id="ficha">Ficha de degustação</h3>
+        <p>Compare as linhas antes de escolher.</p>
+        <div class="tabs" role="tablist"></div>
+        <dl class="rows" id="rows" role="tabpanel"></dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="vantagens">
+    <div class="wrap">
+      <span class="eyebrow">Comprar é fácil</span>
+      <h2>Café fresco chegando na sua porta</h2>
+      <div class="perks"></div>
+    </div>
+  </section>
+
+  <section id="contato">
+    <div class="wrap">
+      <div class="cta">
+        <div>
+          <span class="eyebrow"></span>
+          <h2>Fale com a gente</h2>
+          <p></p>
+        </div>
+        <div class="actions">
+          <span class="handle"></span>
+          <a class="btn" href="#" target="_blank" rel="noopener">Chamar no WhatsApp</a>
+          <a class="btn ghost" href="#" target="_blank" rel="noopener">Instagram</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div class="marca"></div>
+      <div>
+        <h4>Loja</h4>
+        <a href="#cafes">Nossos cafés</a><a href="#origem">Origem</a><a href="#vantagens">Frete e pagamento</a>
+      </div>
+      <div class="atend"></div>
+    </div>
+    <div class="copy"><span></span></div>
+  </div>
+</footer>
+<a class="concept" href="../vendas/index.html"><b>Quer um site assim?</b> · conheça o plano</a>
+<div class="hint" aria-hidden="true"><i></i>role para descobrir</div>
+
+<script src="cliente.js"></script>
+<script src="marca.js"></script>
+<script src="../js/gsap.min.js"></script>
+<script src="../js/ScrollTrigger.min.js"></script>
+<script src="../scene.js?v=7"></script>
+</body>
+</html>
